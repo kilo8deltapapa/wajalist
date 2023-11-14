@@ -1,4 +1,4 @@
-# Project Title
+# Generate Worked All Japan Prefectures List (from ADIF)
 
 Describe briefly what makes your project stand out.
 
@@ -33,4 +33,4 @@ Thank those who helped make this possible.
 
 ## License
 
-[MIT](LICENSE) © [rodrigobdz](https://github.com/rodrigobdz).
+[MIT](LICENSE) © [kilo8deltapapa](https://github.com/kilo8deltapapa).
