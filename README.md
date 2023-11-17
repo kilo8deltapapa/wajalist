@@ -1,4 +1,4 @@
-# Generate Worked All Japan Prefectures List (from ADIF)
+# Generate Worked All Japan Prefectures List (WAJA) from ADIF
 
 This program generates a list of Japan Prefectures that have been confirmed, a list of unconfirmed prefectures, and a mapchartSave.txt file for upload to https://www.mapchart.net/japan.html to visualize the prefectures.
 
@@ -13,6 +13,8 @@ The following ADIF tags in the file being analyzied are used:
 
 This can be obtained by using the ARRL Logbook of the World Query by 
 Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
+
+Information about JARL Worked All Japan Prefectures Award can be found here: https://www.jarl.org/English/4_Library/A-4-2_Awards/Award_Main.htm
 
 ## Requirements
 
