@@ -3,10 +3,12 @@
 # wajalist.py
 
 """
-Description: This script examines an ADIF file and generates a list of confirmed and unconfirmed WAJA prefectures and
-a map configuration file for use with https://www.mapchart.net/japan.html.
+Description: This program generates a list of Japan Prefectures that have been
+confirmed, a list of unconfirmed 
+prefectures, and a mapchartSave.txt file for upload to 
+https://www.mapchart.net/japan.html to visualize the prefectures.
 
-The following ADIF tags in the file analyzied are required:
+The following ADIF tags in the file being analyzied are used:
 <STATION_CALLSIGN>  Your callsign; Optional, Needed for -c option
 <STATE> Prefecture of station worked; Required
 <DXCC> DXCC entity of station worked; Required
@@ -15,13 +17,13 @@ The following ADIF tags in the file analyzied are required:
 <SAT_NAME> Name of satellite used; Optional, needed for -s option
 <PROP_MODE> Propagation mode; Optional, needed for --satonly and --nosat options
 
-This can be obtained by using the ARRL Logbook of the World Query by Rick Murphy K1MU found at URL:
-https://www.rickmurphy.net/lotwquery.htm
+This can be obtained by using the ARRL Logbook of the World Query by 
+Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
 Date Modified: November 17, 2023
-Version: 1.0
+Version: 1.1
 Python Version: 3.10.5
 Dependencies: argparse,adif-io
 License: MIT License
