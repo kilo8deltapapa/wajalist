@@ -2,6 +2,18 @@
 
 This program generates a list of Japan Prefectures that have been confirmed, a list of unconfirmed prefectures, and a mapchartSave.txt file for upload to https://www.mapchart.net/japan.html to visualize the prefectures.
 
+The following ADIF tags in the file being analyzied are used:
+- \<STATION_CALLSIGN>  Your callsign; Optional, Needed for -c option
+- \<STATE> Prefecture of station worked; Required
+- \<DXCC> DXCC entity of station worked; Required
+- \<MODE> Mode used; Optional, Needed for -m option
+- \<BAND> Band used; Optional, Needed for -b option
+- \<SAT_NAME> Name of satellite used; Optional, needed for -s option
+- \<PROP_MODE> Propagation mode; Optional, needed for --satonly and --nosat options
+
+This can be obtained by using the ARRL Logbook of the World Query by 
+Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
+
 ## Requirements
 
 - https://pypi.org/project/argparse/
