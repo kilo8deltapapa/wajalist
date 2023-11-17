@@ -117,16 +117,18 @@ for qso in qsos_raw:
         PROP_MODE = ""
 
     try:
-        # read only records that are with Japan DXCC = 339
-        if qso["DXCC"] == '339' \
-        and ((station_callsign in callsign_list) or len(callsign_list) == 0) \
-        and (SAT in (SAT_NAME, '') or SAT == "") \
-        and (MODE in (qso['MODE'], '') or MODE == "") \
-        and ((PROP_MODE == "SAT" and args.satonly) or (not args.satonly \
-            and not args.nosat) or (PROP_MODE == "" and args.nosat)) \
-        and (BAND in (qso['BAND'], '') or BAND == ""):
-            if qso["STATE"] not in prefs_list:
-                prefs_list.append(qso["STATE"])
+        #read only records that are with Japan DXCC = 339
+        #and conform to the specified band/mode/etc..
+        if qso["DXCC"] == '339':
+            if ((station_callsign in callsign_list) or len(callsign_list) == 0):
+                if (SAT in (SAT_NAME, '') or not SAT):
+                    if ((PROP_MODE == "SAT" and args.satonly) \
+                    or (not args.satonly and not args.nosat) \
+                    or (not PROP_MODE and args.nosat)):
+                        if (MODE in (qso['MODE'], '') or not MODE):
+                            if (BAND in (qso['BAND'], '') or not BAND):
+                                if qso["STATE"] not in prefs_list:
+                                    prefs_list.append(qso["STATE"])
     except KeyError as e:
         #other key does not exist
         pass
