@@ -21,6 +21,8 @@ Information about JARL Worked All Japan Prefectures Award can be found here: htt
 - https://pypi.org/project/argparse/
 - https://pypi.org/project/adif-io/
 
+ja_prefectures.txt must be co-located in the same folder with the .exe or .py file.
+
 ## Installation
 
 
