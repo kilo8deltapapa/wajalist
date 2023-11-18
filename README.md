@@ -19,6 +19,10 @@ Use the following settigs when Querying LoTW for your contact records:
 * Include operator location data in report?	 	YES
 * Include owner callsign in report? YES
 
+If the lotwreport.adi downloaded from LoTW contains non UTF-8 characters, use the iconv utility to remove them.
+
+>  iconv -f utf-8 -t utf-8 -c lotwreport.adi > log.adi
+
 Information about JARL Worked All Japan Prefectures Award can be found here: https://www.jarl.org/English/4_Library/A-4-2_Awards/Award_Main.htm
 
 ## Requirements
