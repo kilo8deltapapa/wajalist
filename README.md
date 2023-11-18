@@ -14,6 +14,11 @@ The following ADIF tags in the file being analyzied are used:
 This can be obtained by using the ARRL Logbook of the World Query by 
 Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 
+Use the following settigs when Querying LoTW for your contact records:
+* Include worked station location data in report?	 	YES
+* Include operator location data in report?	 	YES
+* Include owner callsign in report? YES
+
 Information about JARL Worked All Japan Prefectures Award can be found here: https://www.jarl.org/English/4_Library/A-4-2_Awards/Award_Main.htm
 
 ## Requirements
