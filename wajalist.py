@@ -205,7 +205,7 @@ for award submission.\n")
     print("Generating mapchart.net file...")
 
     with open("mapchartSave-ja.txt", "w", encoding="utf-8") as f:
-        print('{"groups":{"#e0ecf4":{"label":"Confirmed LoTW","paths":[', end="", file=f)
+        print('{"groups":{"#32a852":{"label":"Confirmed LoTW","paths":[', end="", file=f)
 
         for i,p in enumerate(prefs_list):
             if i < len(prefs_list) - 1:
@@ -213,7 +213,7 @@ for award submission.\n")
             else:
                 print('"' + pref_defs[int(p)-1][1] + '"',end="", file=f)
 
-        print(']},"#cc3333":{"label":"Needed","paths":[',end="", file=f)
+        print(']},"#db4325":{"label":"Needed","paths":[',end="", file=f)
 
         for i,p in enumerate(needed_list):
             if i < len(needed_list) - 1:
