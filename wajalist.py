@@ -23,7 +23,7 @@ Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
 Date Modified: November 23, 2023
-Version: 1.2
+Version: 1.3
 Python Version: 3.10.5
 Dependencies: sys,datetime,csv,argparse,adif-io
 License: MIT License
@@ -35,7 +35,7 @@ import csv
 import argparse
 import adif_io
 
-VERSION = 1.2
+VERSION = 1.3
 
 def lookup_prefecture_name(number):
     '''Takes in a number, returns the name of the prefecture'''
@@ -198,14 +198,14 @@ if len(prefs_list) > 0:
 
     print("   Done.\n")
 
-    print("File can be imported into\
+    print("File can be imported into \
 https://www.jarl.org/English/4_Library/A-4-2_Awards/sample-form.xls\
 for award submission.\n")
 
     print("Generating mapchart.net file...")
 
     with open("mapchartSave-ja.txt", "w", encoding="utf-8") as f:
-        print('{"groups":{"#e0ecf4":{"label":"Confirmed LoTW","paths":[', end="", file=f)
+        print('{"groups":{"#32a852":{"label":"Confirmed LoTW","paths":[', end="", file=f)
 
         for i,p in enumerate(prefs_list):
             if i < len(prefs_list) - 1:
@@ -213,7 +213,7 @@ for award submission.\n")
             else:
                 print('"' + pref_defs[int(p)-1][1] + '"',end="", file=f)
 
-        print(']},"#cc3333":{"label":"Needed","paths":[',end="", file=f)
+        print(']},"#db4325":{"label":"Needed","paths":[',end="", file=f)
 
         for i,p in enumerate(needed_list):
             if i < len(needed_list) - 1:
@@ -221,7 +221,7 @@ for award submission.\n")
             else:
                 print('"' + pref_defs[int(p)-1][1] + '"', file=f)
 
-        print(']}},"title":"' + ', '.join(callsign_list) + 'Worked All Japan \
+        print(']}},"title":"' + ', '.join(callsign_list) + ' Worked All Japan \
         Prefectures","hidden":[],"background":"#fff","borders":"#000",\
         "legendFont":"Helvetica","legendFontColor":"#000",\
         "legendBgColor":"#00000000","legendWidth":150,"areBordersShown":true,\
