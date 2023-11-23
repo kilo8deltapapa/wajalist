@@ -22,16 +22,29 @@ Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
-Date Modified: November 17, 2023
-Version: 1.1
+Date Modified: November 23, 2023
+Version: 1.2
 Python Version: 3.10.5
-Dependencies: argparse,adif-io
+Dependencies: sys,datetime,csv,argparse,adif-io
 License: MIT License
 """
 
 import sys
+import datetime
+import csv
 import argparse
 import adif_io
+
+VERSION = 1.2
+
+def lookup_prefecture_name(number):
+    '''Takes in a number, returns the name of the prefecture'''
+    name = None
+    for pref in pref_defs:
+        if pref[0] == number:
+            name = pref[1]
+            break
+    return name
 
 # Initialize parser
 parser = argparse.ArgumentParser()
@@ -50,7 +63,7 @@ parser.add_argument("--satonly", action='store_true', help = "include only \
     satellite QSOs")
 parser.add_argument("--nosat", action='store_true', help = "exclude satellite \
     QSOs")
-
+print(f"WAJA List by K8DP - Version {VERSION}")
 # Read arguments from command line
 args = parser.parse_args()
 if args.filename:
@@ -91,8 +104,9 @@ with open("ja_prefectures.txt", "r", encoding="utf-8") as file2:
 prefs_list = []
 needed_list = []
 qsocall_list = []
+waja_list = []
 
-print("Worked All Japan Award (WAJA) Listing")
+print(f"Reading {input_filename}")
 
 #read ADIF file into lists
 qsos_raw, adif_header = adif_io.read_from_file(input_filename)
@@ -129,12 +143,26 @@ for qso in qsos_raw:
                             if (BAND in (qso['BAND'], '') or not BAND):
                                 if qso["STATE"] not in prefs_list:
                                     prefs_list.append(qso["STATE"])
+                                    d = datetime.datetime.strptime(qso['QSO_DATE'], '%Y%m%d')
+                                    qso_band = qso['BAND']
+                                    if PROP_MODE == "SAT":
+                                        #qso_band = qso['SAT_NAME']+"("+qso_band+")"
+                                        qso_band = qso['SAT_NAME']
+                                    num_pref_string = qso['STATE'] + "," + \
+                                    lookup_prefecture_name(qso['STATE'])
+
+                                    waja_list.append([qso['CALL'],\
+                                    datetime.date.strftime(d, "%Y/%m/%d"),\
+                                    qso_band,qso['MODE'],num_pref_string])
     except KeyError as e:
         #other key does not exist
         pass
+print("   Done.\n")
 
-print("Callsigns in ADIF = ", ', '.join(qsocall_list),"\n")
-print(len(qsos_raw), "records in ADIF\n")
+print(f"Callsigns found in ADIF: {len(qsocall_list)}")
+for c in qsocall_list:
+    print("   ",c)
+print("Records in ADIF:", len(qsos_raw))
 
 #sort the prefecture list
 prefs_list.sort()
@@ -144,20 +172,36 @@ for i in range(1,48):
         needed_list.append(str(i).zfill(2))
 
 print("Prefectures Confirmed:", len(prefs_list))
-for p in prefs_list:
-    print(pref_defs[int(p)-1][1], end=" ")
-    print(p,end="\n")
+#for p in prefs_list:
+    #print(pref_defs[int(p)-1][1], end=" ")
+    #print(p,end="\n")
 
-print("\n")
+#print("\n")
 
 print("Prefectures Needed:",len(pref_defs)-len(prefs_list))
 for p in needed_list:
-    print(pref_defs[int(p)-1][1], end=" ")
+    print("   ",pref_defs[int(p)-1][1], end=" ")
     print(p,end="\n")
 
-print("\n")
+print()
 
 if len(prefs_list) > 0:
+    print("Generating wajalist.csv...")
+    waja_list.sort(key=lambda x: x[4])
+
+    with open('wajalist.csv', 'w', encoding="utf-8") as f:
+        # using csv.writer method from CSV package
+        write = csv.writer(f)
+        for waja in waja_list:
+    #        print(waja)
+            write.writerow(waja)
+
+    print("   Done.\n")
+
+    print("File can be imported into\
+https://www.jarl.org/English/4_Library/A-4-2_Awards/sample-form.xls\
+for award submission.\n")
+
     print("Generating mapchart.net file...")
 
     with open("mapchartSave-ja.txt", "w", encoding="utf-8") as f:
