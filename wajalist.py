@@ -198,8 +198,8 @@ if len(prefs_list) > 0:
 
     print("   Done.\n")
 
-    print("File can be imported into\
-https://www.jarl.org/English/4_Library/A-4-2_Awards/sample-form.xls\
+    print("File can be imported into \
+https://www.jarl.org/English/4_Library/A-4-2_Awards/sample-form.xls \
 for award submission.\n")
 
     print("Generating mapchart.net file...")
@@ -221,7 +221,7 @@ for award submission.\n")
             else:
                 print('"' + pref_defs[int(p)-1][1] + '"', file=f)
 
-        print(']}},"title":"' + ', '.join(callsign_list) + 'Worked All Japan \
+        print(']}},"title":"' + ', '.join(callsign_list) + ' Worked All Japan \
         Prefectures","hidden":[],"background":"#fff","borders":"#000",\
         "legendFont":"Helvetica","legendFontColor":"#000",\
         "legendBgColor":"#00000000","legendWidth":150,"areBordersShown":true,\
