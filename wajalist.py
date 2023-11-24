@@ -23,7 +23,7 @@ Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
 Date Modified: November 23, 2023
-Version: 1.5
+Version: 1.6
 Python Version: 3.10.5
 Dependencies: sys,datetime,csv,argparse,adif-io
 License: MIT License
@@ -35,7 +35,7 @@ import csv
 import argparse
 import adif_io
 
-VERSION = 1.5
+VERSION = 1.6
 
 def lookup_prefecture_name(number):
     '''Takes in a number, returns the name of the prefecture'''
@@ -112,8 +112,13 @@ print(f"Reading {input_filename}")
 #read ADIF file into lists
 qsos_raw, adif_header = adif_io.read_from_file(input_filename)
 
-#look through qsos for those that match criteria
+# The QSOs are probably sorted by QSO time already, but make sure:
 for qso in qsos_raw:
+    qso["t"] = adif_io.time_on(qso)
+qsos_raw_sorted = sorted(qsos_raw, key = lambda qso: qso["t"])
+
+#look through qsos for those that match criteria
+for qso in qsos_raw_sorted:
 
     station_callsign = qso["STATION_CALLSIGN"].upper()
     if station_callsign not in qsocall_list:
