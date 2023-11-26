@@ -22,8 +22,8 @@ Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
-Date Modified: November 23, 2023
-Version: 1.6
+Date Modified: November 25, 2023
+Version: 1.7
 Python Version: 3.10.5
 Dependencies: sys,datetime,csv,argparse,adif-io
 License: MIT License
@@ -35,7 +35,7 @@ import csv
 import argparse
 import adif_io
 
-VERSION = 1.6
+VERSION = 1.7
 
 def lookup_prefecture_name(number):
     '''Takes in a number, returns the name of the prefecture'''
@@ -254,7 +254,7 @@ for award submission.\n")
         Prefectures","hidden":[],"background":"#fff","borders":"#000",\
         "legendFont":"Helvetica","legendFontColor":"#000",\
         "legendBgColor":"#00000000","legendWidth":150,"areBordersShown":true,\
-        "defaultColor":"#d1dbdd","labelsColor":"#6a0707",\
+        "defaultColor":"#d1dbdd","labelsColor":"#00000000",\
         "strokeWidth":"medium","areLabelsShown":true,\
         "legendPosition":"top_left","legendSize":"medium",\
         "legendStatus":"show","scalingPatterns":true,\
