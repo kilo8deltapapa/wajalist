@@ -4,9 +4,10 @@
 
 """
 Description: This program generates a list of Japan Prefectures that have been
-confirmed, a list of unconfirmed
-prefectures, and a mapchartSave.txt file for upload to
-https://www.mapchart.net/japan.html to visualize the prefectures.
+confirmed, a list of unconfirmed prefectures, and a mapchartSave.txt file for
+upload to https://www.mapchart.net/japan.html to visualize the prefectures.
+The program also generates a list of Japan Century Cities, Guns and Ku's for
+JCC, JGC and WAKU awards.
 
 The following ADIF tags in the file being analyzied are used:
 <STATION_CALLSIGN>  Your callsign; Optional, Needed for -c option
@@ -22,27 +23,55 @@ Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
-Date Modified: November 25, 2023
-Version: 1.7
+Date Modified: February 22, 2024
+Version: 2.0
 Python Version: 3.10.5
 Dependencies: sys,datetime,csv,argparse,adif-io
 License: MIT License
 """
 
 import sys
+import re
 import datetime
 import csv
 import argparse
 import adif_io
 
-VERSION = 1.7
+VERSION = 2.0
 
 def lookup_prefecture_name(number):
-    '''Takes in a number, returns the name of the prefecture'''
+    '''Takes in a number, returns the name of the Prefecture'''
     name = None
     for pref in pref_defs:
         if pref[0] == number:
             name = pref[1]
+            break
+    return name
+
+def lookup_city_name(number):
+    '''Takes in a number, returns the name of the City'''
+    name = None
+    for city in city_defs:
+        if city[0] == number:
+            name = city[1]
+            break
+    return name
+
+def lookup_gun_name(number):
+    '''Takes in a number, returns the name of the Gun'''
+    name = None
+    for gun in gun_defs:
+        if gun[0] == number:
+            name = gun[1]
+            break
+    return name
+
+def lookup_ku_name(number):
+    '''Takes in a number, returns the name of the Ku'''
+    name = None
+    for ku in ku_defs:
+        if ku[0] == number:
+            name = ku[1]
             break
     return name
 
@@ -101,10 +130,88 @@ with open("ja_prefectures.txt", "r", encoding="utf-8") as file2:
             break
         pref_defs.append(line.split(" "))
 
+#for pref in pref_defs:
+#    print(pref)
+
+#Read JARL JCC ("Century Cities") list from text file
+#https://www.jarl.org/English/4_Library/A-4-5_jcc-jcg/jcc-list.txt
+city_defs = []
+with open("jcc-list.txt", "r", encoding="utf-8") as file3:
+    while True:
+        line = file3.readline()
+        if not line:
+            break
+        line = line.strip()
+        try:
+            if line[2].isdigit():
+                number = re.findall(r'([0-9]+) .*', line)
+                try:
+                    name = re.search(r"\b[A-Z]\w*\b", line).group(0)
+                except:
+                    name = ''
+                city_defs.append([number[0], name])
+        except:
+            pass
+
+#for city in city_defs:
+#    print(city)
+
+#Read JARL JCG ("Guns") list from text file
+#https://www.jarl.org/English/4_Library/A-4-5_jcc-jcg/jcg-list.txt
+gun_defs = []
+with open("jcg-list.txt", "r", encoding="utf-8") as file4:
+    while True:
+        line = file4.readline()
+        if not line:
+            break
+        line = line.strip()
+        try:
+            if line[2].isdigit():
+                number = re.findall(r'([0-9]+) .*', line)
+                try:
+                    name = re.search(r"\b[A-Za-z]\w*\b", line).group(0)
+                except:
+                    name = ''
+                gun_defs.append([number[0], name.title()])
+        except:
+            pass
+
+#for gun in gun_defs:
+#    print(gun)
+
+#Read JARL Ku list from text file (converted from Excel)
+#https://www.jarl.org/English/4_Library/A-4-5_jcc-jcg/KU_Data-eng.xls
+ku_defs = []
+with open("ku-list.txt", "r", encoding="utf-8") as file5:
+    while True:
+        line = file5.readline()
+        if not line:
+            break
+        line = line.strip()
+        try:
+            if line[4].isdigit():
+                number = re.findall(r'([0-9]+) .*', line)
+                try:
+                    name = re.search(r"\b[A-Za-z]\w*\b", line).group(0)
+                except:
+                    name = ''
+                ku_defs.append([number[0], name.title()])
+        except:
+            pass
+
+#for ku in ku_defs:
+#    print(ku)
+
 prefs_list = []
+centcities_list = []
+guns_list = []
+kus_list = []
 needed_list = []
 qsocall_list = []
 waja_list = []
+jcc_list = []
+jgc_list = []
+waku_list = []
 missing_list = []
 
 print(f"Reading {input_filename}")
@@ -140,7 +247,13 @@ for qso in qsos_raw_sorted:
         STATE = qso["STATE"]
     except KeyError as e:
         #key does not exist
-        STATE = None 
+        STATE = None
+
+    try:
+        CNTY = qso["CNTY"]
+    except KeyError as e:
+        #key does not exist
+        CNTY = None
 
     try:
         #read only records that are with Japan DXCC = 339
@@ -153,7 +266,60 @@ for qso in qsos_raw_sorted:
                     or (not PROP_MODE and args.nosat)):
                         if (MODE in (qso['MODE'], '') or not MODE):
                             if (BAND in (qso['BAND'], '') or not BAND):
-                                if STATE != None and STATE not in prefs_list:
+                                #for JCC
+                                if CNTY is not None and CNTY not in centcities_list and \
+                                any(CNTY in sublist for sublist in city_defs):
+                                    centcities_list.append(qso["CNTY"])
+                                    d = datetime.datetime.strptime(qso['QSO_DATE'], '%Y%m%d')
+                                    qso_band = qso['BAND']
+                                    if PROP_MODE == "SAT":
+                                        #qso_band = qso['SAT_NAME']+"("+qso_band+")"
+                                        qso_band = qso['SAT_NAME']
+                                    num_city_string = qso['CNTY'] + "," + \
+                                    lookup_city_name(qso['CNTY'])
+
+                                    jcc_list.append([qso['CALL'],\
+                                    datetime.date.strftime(d, "%Y/%m/%d"),\
+                                    qso_band,qso['MODE'],num_city_string])
+
+                                #for JGC
+                                elif CNTY is not None and CNTY not in guns_list and \
+                                any(CNTY in sublist for sublist in gun_defs):
+                                    guns_list.append(qso["CNTY"])
+                                    d = datetime.datetime.strptime(qso['QSO_DATE'], '%Y%m%d')
+                                    qso_band = qso['BAND']
+                                    if PROP_MODE == "SAT":
+                                        #qso_band = qso['SAT_NAME']+"("+qso_band+")"
+                                        qso_band = qso['SAT_NAME']
+                                    num_gun_string = qso['CNTY'] + "," + \
+                                    lookup_gun_name(qso['CNTY'])
+
+                                    jgc_list.append([qso['CALL'],\
+                                    datetime.date.strftime(d, "%Y/%m/%d"),\
+                                    qso_band,qso['MODE'],num_gun_string])
+
+                                #for WAKU
+                                elif CNTY is not None and CNTY not in kus_list and \
+                                any(CNTY in sublist for sublist in ku_defs):
+                                    kus_list.append(qso["CNTY"])
+                                    d = datetime.datetime.strptime(qso['QSO_DATE'], '%Y%m%d')
+                                    qso_band = qso['BAND']
+                                    if PROP_MODE == "SAT":
+                                        #qso_band = qso['SAT_NAME']+"("+qso_band+")"
+                                        qso_band = qso['SAT_NAME']
+                                    num_ku_string = qso['CNTY'] + "," + \
+                                    lookup_ku_name(qso['CNTY'])
+
+                                    waku_list.append([qso['CALL'],\
+                                    datetime.date.strftime(d, "%Y/%m/%d"),\
+                                    qso_band,qso['MODE'],num_ku_string])
+
+#                                elif CNTY not in guns_list and CNTY not in centcities_list \
+#                                and CNTY not in kus_list and CNTY is not None:
+#                                    print(CNTY)
+
+                                #for WAJA
+                                if STATE is not None and STATE not in prefs_list:
                                     prefs_list.append(qso["STATE"])
                                     d = datetime.datetime.strptime(qso['QSO_DATE'], '%Y%m%d')
                                     qso_band = qso['BAND']
@@ -166,10 +332,21 @@ for qso in qsos_raw_sorted:
                                     waja_list.append([qso['CALL'],\
                                     datetime.date.strftime(d, "%Y/%m/%d"),\
                                     qso_band,qso['MODE'],num_pref_string])
-                                elif STATE == None:
+                                
+                                if STATE is None or CNTY is None:
+                                    
+                                    if STATE is None and CNTY is None:
+                                        missing = 'Prefecture+GunShiKu'
+                                    elif STATE is None:
+                                        missing = 'Prefecture'
+                                    elif CNTY is None:
+                                        missing = 'GunShiKu'
+
+                                    
                                     d = datetime.datetime.strptime(qso['QSO_DATE'], '%Y%m%d')
                                     missing_list.append([qso['CALL'],\
-                                    datetime.date.strftime(d, "%Y/%m/%d")])
+                                    datetime.date.strftime(d, "%Y/%m/%d"),\
+                                    missing])
     except KeyError as e:
         #other key does not exist
         pass
@@ -195,6 +372,11 @@ print("Prefectures Confirmed:", len(prefs_list))
     #print(p,end="\n")
 
 #print("\n")
+print("Century Cities Confirmed:", len(centcities_list))
+
+print("Guns Confirmed:", len(guns_list))
+
+print("Kus Confirmed:", len(kus_list))
 
 print("Prefectures Needed:",len(pref_defs)-len(prefs_list))
 for p in needed_list:
@@ -206,7 +388,7 @@ print()
 if len(missing_list) > 0:
     print("Generating missing.csv...")
     missing_list.sort(key=lambda x: x[0])
-    with open('missing.csv', 'w', encoding="utf-8") as f:
+    with open('missing.csv', 'w', newline='', encoding="utf-8") as f:
         # using csv.writer method from CSV package
         write = csv.writer(f)
         for m in missing_list:
@@ -218,12 +400,48 @@ if len(prefs_list) > 0:
     print("Generating wajalist.csv...")
     waja_list.sort(key=lambda x: x[4])
 
-    with open('wajalist.csv', 'w', encoding="utf-8") as f:
+    with open('wajalist.csv', 'w', newline='', encoding="utf-8") as f:
         # using csv.writer method from CSV package
         write = csv.writer(f)
         for waja in waja_list:
     #        print(waja)
             write.writerow(waja)
+
+    print("   Done.\n")
+
+if len(centcities_list) > 0:
+    print("Generating jcclist.csv...")
+    jcc_list.sort(key=lambda x: x[4])
+
+    with open('jcclist.csv', 'w', newline='', encoding="utf-8") as f:
+        # using csv.writer method from CSV package
+        write = csv.writer(f)
+        for jcc in jcc_list:
+            write.writerow(jcc)
+
+    print("   Done.\n")
+
+if len(guns_list) > 0:
+    print("Generating jgclist.csv...")
+    jgc_list.sort(key=lambda x: x[4])
+
+    with open('jgclist.csv', 'w', newline='', encoding="utf-8") as f:
+        # using csv.writer method from CSV package
+        write = csv.writer(f)
+        for jgc in jgc_list:
+            write.writerow(jgc)
+
+    print("   Done.\n")
+
+if len(kus_list) > 0:
+    print("Generating wakulist.csv...")
+    waku_list.sort(key=lambda x: x[4])
+
+    with open('wakulist.csv', 'w', newline='', encoding="utf-8") as f:
+        # using csv.writer method from CSV package
+        write = csv.writer(f)
+        for ku in waku_list:
+            write.writerow(ku)
 
     print("   Done.\n")
 
