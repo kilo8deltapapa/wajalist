@@ -23,8 +23,8 @@ Rick Murphy K1MU found at URL: https://www.rickmurphy.net/lotwquery.htm
 
 Author: Douglas C. Papay K8DP
 Date Created: November 17, 2023
-Date Modified: February 22, 2024
-Version: 2.0
+Date Modified: February 23, 2024
+Version: 2.1
 Python Version: 3.10.5
 Dependencies: sys,datetime,csv,argparse,adif-io
 License: MIT License
@@ -37,7 +37,7 @@ import csv
 import argparse
 import adif_io
 
-VERSION = 2.0
+VERSION = 2.1
 
 def lookup_prefecture_name(number):
     '''Takes in a number, returns the name of the Prefecture'''
@@ -210,7 +210,7 @@ needed_list = []
 qsocall_list = []
 waja_list = []
 jcc_list = []
-jgc_list = []
+jcg_list = []
 waku_list = []
 missing_list = []
 
@@ -294,7 +294,7 @@ for qso in qsos_raw_sorted:
                                     num_gun_string = qso['CNTY'] + "," + \
                                     lookup_gun_name(qso['CNTY'])
 
-                                    jgc_list.append([qso['CALL'],\
+                                    jcg_list.append([qso['CALL'],\
                                     datetime.date.strftime(d, "%Y/%m/%d"),\
                                     qso_band,qso['MODE'],num_gun_string])
 
@@ -422,14 +422,14 @@ if len(centcities_list) > 0:
     print("   Done.\n")
 
 if len(guns_list) > 0:
-    print("Generating jgclist.csv...")
-    jgc_list.sort(key=lambda x: x[4])
+    print("Generating jcglist.csv...")
+    jcg_list.sort(key=lambda x: x[4])
 
-    with open('jgclist.csv', 'w', newline='', encoding="utf-8") as f:
+    with open('jcglist.csv', 'w', newline='', encoding="utf-8") as f:
         # using csv.writer method from CSV package
         write = csv.writer(f)
-        for jgc in jgc_list:
-            write.writerow(jgc)
+        for jcg in jcg_list:
+            write.writerow(jcg)
 
     print("   Done.\n")
 
